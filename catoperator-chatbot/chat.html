@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Caterpillar Operator Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        .messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin: 10px 0;
+        }
+
+        .user {
+            text-align: right;
+            color: blue;
+        }
+
+        .bot {
+            text-align: left;
+            color: green;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background: #f8b400;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <h2>Caterpillar Operator Chatbot 🛠️</h2>
+        <div class="messages" id="messages"></div>
+        <input type="text" id="userInput" placeholder="Ask about operating a machine...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML += `<div class="message user"><b>You:</b> ${message}</div>`;
+
+            input.value = "";
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                messagesDiv.innerHTML += `<div class="message bot"><b>Bot:</b> ${data.reply}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (err) {
+                messagesDiv.innerHTML += `<div class="message bot"><b>Bot:</b> Error contacting server.</div>`;
+            }
+        }
+    </script>
+</body>
+
+</html>
